@@ -6,13 +6,14 @@ This repository contains various programs and demonstrations for the Mecademic r
 
 #### Supported Robots
 
- * Meca500 R1, R2, R3
+ * Meca500 R3
 
 
 ## Samples
 
  * HandGuiding
  * PythonUI
+ * ZaberProbing
 
 
 ## Getting Help
