@@ -2,12 +2,11 @@
 
 # Mecademic Sample Programs
 
-This repository contains comprehensive programming examples and demonstrations for Mecademic robots across multiple programming languages and integration scenarios.
+This repository contains programming examples and demonstrations for Mecademic robots across multiple programming languages and integration scenarios.
 
 ## Supported Robots
 
-* **Meca500 R3 and R4** - 6-axis industrial robot arm
-* **Meca500 R5** - Latest generation 6-axis robot
+* **Meca500 R3 and R4**
 
 ## Programming Languages & Examples
 
@@ -35,11 +34,6 @@ Industrial automation examples for various PLC systems:
 - **Robot Connection**: Ensure your Meca500 robot is connected to your network
 - **Network Access**: Computer must be able to communicate with robot IP address
 - **Robot Firmware**: Compatible firmware version for your robot model
-
-### Language-Specific Requirements
-- **Python**: Python 3.7+ with required packages (see individual example READMEs)
-- **C**: Windows development environment with Winsock2 support
-- **PLC**: Appropriate programming software for your PLC brand
 
 ## Quick Start
 

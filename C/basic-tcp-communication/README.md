@@ -1,98 +1,34 @@
-# C TCP/IP Communication Example for Meca500
+# Meca500 TCP/IP Communication (C)
 
-This example demonstrates basic TCP/IP socket communication with the Meca500 robot using C on Windows systems.
-
-## Overview
-
-The example consists of:
-- **socket_comm.h/.c**: Low-level TCP/IP socket communication functions
-- **robot_interface.h/.c**: High-level robot command interface
-- **main.c**: Example usage demonstrating a complete robot operation sequence
-
-## Features
-
-- Connect to Meca500 robot via TCP/IP
-- Send robot commands (activate, home, move, deactivate)
-- Wait for command completion and error handling
-- Cross-platform socket implementation (Windows focus)
+Basic TCP/IP socket communication example for the Meca500 robot on Windows.
 
 ## Prerequisites
+- Windows environment
+- GCC compiler (MinGW or similar)
+- Meca500 robot powered on and network accessible
 
-- Windows development environment
-- Visual Studio or MinGW compiler
-- Meca500 robot connected to network
-- Winsock2 library (ws2_32.lib)
+## Robot Setup
+1. Ensure robot is connected to network
+2. Find robot IP address (default: 192.168.0.100)
+3. Verify robot is in ready state (not in error)
 
-## Building
-
-### Visual Studio
-```bash
-cl main.c robot_interface.c socket_comm.c -lws2_32 -o robot_example.exe
-```
-
-### MinGW
-```bash
-gcc main.c robot_interface.c socket_comm.c -lws2_32 -o robot_example.exe
-```
+## Files
+- `socket_comm.h/.c` - Socket/TCP-IP communication implementation
+- `robot_interface.h/.c` - Robot command interface and message parsing
+- `main.c` - Main program demonstrating robot control sequence
 
 ## Usage
-
 ```bash
-robot_example.exe [robot_ip_address]
+gcc -o robot_example main.c robot_interface.c socket_comm.c -lws2_32
+robot_example.exe [robot_ip]
 ```
 
-If no IP address is provided, the default `192.168.0.100` will be used.
+**⚠️ Safety Warning**: This program physically moves the robot. Ensure safe workspace before running.
 
-### Example:
-```bash
-robot_example.exe 192.168.0.100
-```
-
-## Program Flow
-
-1. **Connect** to robot control port (10000)
-2. **Activate** the robot
-3. **Home** the robot
-4. **Move** to zero position
-5. **Move** to shipping position
-6. **Deactivate** the robot
-7. **Disconnect** from robot
-
-## Error Handling
-
-The program includes comprehensive error handling:
-- Network connection errors
-- Robot error codes (1000-2000 range)
-- Command timeout handling
-- Automatic disconnection on errors
-
-## Robot Commands Used
-
-- `ActivateRobot`: Enable robot motors
-- `Home`: Home all robot axes
-- `MoveJoints`: Move to specified joint positions
-- `DeactivateRobot`: Disable robot motors
-
-## Return Codes
-
-- **3001**: Robot activated
-- **3002**: Robot deactivated  
-- **3003**: Homing completed
-- **3004**: End of Block (EOB) - movement completed
-- **1000-2000**: Error codes range
-
-## Customization
-
-To add new robot commands:
-
-1. Add function declaration to `robot_interface.h`
-2. Implement function in `robot_interface.c`
-3. Use `tcpip_send()` to send command
-4. Use `wait_for_return_code()` to wait for completion
-
-## Safety Notes
-
-- Always activate the robot before sending motion commands
-- Always deactivate the robot when finished
-- Ensure robot workspace is clear before running movements
-- Monitor robot status and error codes during operation
+## Example Sequence
+1. Connect to robot control port
+2. Activate robot
+3. Home robot
+4. Move to zero position
+5. Move to shipping position
+6. Deactivate and disconnect

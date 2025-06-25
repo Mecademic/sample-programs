@@ -2,7 +2,16 @@
   "permissions": {
     "allow": [
       "Bash(mkdir:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "WebFetch(domain:support.mecademic.com)",
+      "WebFetch(domain:4405658.fs1.hubspotusercontent-na1.net)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(wget:*)",
+      "Bash(grep:*)",
+      "Bash(sed:*)",
+      "Bash(rg:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }
