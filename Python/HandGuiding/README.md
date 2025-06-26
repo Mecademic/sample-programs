@@ -1,175 +1,83 @@
-# Hand Guiding Example
+# Hand Guiding Control for Mecademic Robots
 
-This example demonstrates force-controlled hand guiding of the Meca500 robot using real-time force/torque sensor feedback.
+Python GUI application for hand guiding control of Mecademic robots using force/torque feedback from an ATI Net F/T sensor.
 
-## Overview
+## Description
 
-The Hand Guiding application allows users to manually guide the robot by applying forces to the end-effector. The robot responds to these forces by moving in the corresponding direction, providing an intuitive way to teach robot positions and paths.
-
-## Features
-
-- **Real-time force sensing** using NetFT force/torque sensor
-- **Responsive robot movement** based on applied forces
-- **Safety monitoring** with force limits and emergency stops
-- **Visual feedback** showing force vectors and robot status
-- **Teaching mode** for recording robot positions
-- **Haptic feedback** through controlled robot resistance
+This application enables intuitive hand guiding of Mecademic robots by reading force and torque values from an ATI force/torque sensor and translating them into robot movements. The system supports both master-slave robot configurations and single robot force-guided motion.
 
 ## Prerequisites
 
-### Hardware
-- Meca500 robot with force/torque sensor capability
-- NetFT force/torque sensor (ATI or compatible)
-- Network connection to both robot and force sensor
+- **Python 3.7.3** (specifically tested version)
+- **Mecademic robot** (M500, M1000, or SCARA series)
+- **ATI Net F/T force/torque sensor** with network interface
+- **Network access** to both robot and sensor with open ports:
+  - Robot: TCP ports 10000 (control) and 10001 (monitoring)
+  - ATI sensor: UDP port 49152
 
-### Software
-- Python 3.7+
-- Required Python packages:
-  ```bash
-  pip install mecademicpy numpy matplotlib
-  ```
+## Dependencies
 
-## Files Description
+Install required Python packages:
 
-- **`ForceControl.py`** - Main force control logic and robot movement
-- **`NetFT.py`** - Force/torque sensor communication interface
-- **`robot.py`** - Robot communication and control wrapper
-- **`robot_common.py`** - Shared robot utilities and constants
-- **`robot_logger.py`** - Logging functionality for debugging
-- **`mx_robot_def.py`** - Robot-specific definitions and parameters
+```bash
+pip install PyQt5
+```
+
+**Note**: All other dependencies are Python standard library modules (socket, threading, time, etc.)
+
+## Hardware Setup
+
+1. Connect your Mecademic robot to the network (default IP: 192.168.0.100)
+2. Connect the ATI Net F/T sensor to the network
+3. Ensure both devices are accessible from your computer
+4. Verify the force/torque sensor is properly calibrated
+5. Configure firewall to allow:
+   - TCP connections to robot on ports 10000-10001
+   - UDP communication with sensor on port 49152
 
 ## Configuration
 
-### Robot Settings
-Update the robot IP address in the main script:
-```python
-ROBOT_IP = "192.168.0.100"  # Change to your robot's IP address
-```
+Before running, update the IP addresses in the code:
 
-### Force Sensor Settings
-Configure the NetFT sensor parameters:
-```python
-SENSOR_IP = "192.168.0.200"  # Force sensor IP address
-FORCE_THRESHOLD = 5.0        # Force threshold in Newtons
-TORQUE_THRESHOLD = 0.5       # Torque threshold in Nm
-```
+1. Open `ForceControl.py`
+2. Locate the robot connection section and update IP addresses
+3. Update the ATI sensor IP address in the sensor initialization
+4. Ensure network connectivity by testing ping to both devices
 
-### Safety Parameters
-Adjust safety limits as needed:
-```python
-MAX_VELOCITY = 50.0          # Maximum robot velocity (mm/s)
-MAX_FORCE = 20.0             # Maximum allowed force (N)
-WORKSPACE_LIMITS = [...]     # Define safe workspace boundaries
+## Running the Application
+
+```bash
+python ForceControl.py
 ```
 
 ## Usage
 
-1. **Connect hardware**:
-   - Ensure robot is connected and initialized
-   - Connect force/torque sensor to network
-   - Verify sensor calibration
+1. **Robot Connection**: Click the robot icon to connect to the robot(s)
+2. **Enable Sensor**: Click the data wave icon to start force/torque monitoring
+3. **Start Guiding**: Click the gripper icon to enable hand guiding mode
+4. Apply gentle forces to the robot end-effector to guide it through desired motions
 
-2. **Run the application**:
-   ```bash
-   python ForceControl.py
-   ```
+## File Structure
 
-3. **Initialize the system**:
-   - The robot will activate and home automatically
-   - Force sensor will be zeroed
-   - System will enter hand guiding mode
+- `ForceControl.py` - Main GUI application with hand guiding logic
+- `robot.py` - Mecademic robot communication interface
+- `NetFT.py` - ATI Net F/T sensor communication interface
+- `robot_common.py` - Common robot utilities and constants
+- `robot_logger.py` - Logging functionality
+- `mx_robot_def.py` - Mecademic robot definitions
 
-4. **Hand guiding operation**:
-   - Apply gentle forces to the robot end-effector
-   - Robot will move in the direction of applied force
-   - Release force to stop movement
-   - Use teaching interface to record positions
+## Safety Notes
 
-## Operation Modes
-
-### Teaching Mode
-- Record robot positions for later playback
-- Save/load position sequences
-- Define custom motion paths
-
-### Force Following Mode
-- Robot follows applied forces in real-time
-- Adjustable sensitivity and response speed
-- Safety limits prevent excessive forces
-
-### Compliance Mode
-- Robot provides controlled resistance
-- Useful for assembly operations
-- Configurable stiffness parameters
-
-## Safety Features
-
-- **Force monitoring**: Continuous monitoring of applied forces
-- **Emergency stop**: Immediate robot stop on excessive force
-- **Workspace limits**: Robot movement restricted to safe area
-- **Velocity limits**: Maximum robot speed constraints
-- **Sensor validation**: Force sensor health monitoring
+- Always have the emergency stop accessible
+- Start with low force gains and test carefully
+- Ensure proper workspace limits are configured
+- Monitor robot movements at all times during operation
 
 ## Troubleshooting
 
-### Common Issues
+- **Connection Issues**: Verify IP addresses and network connectivity
+- **Sensor Not Reading**: Check ATI sensor network configuration
+- **Robot Not Moving**: Ensure robot is activated and motion is resumed
+- **GUI Not Starting**: Verify PyQt5 installation
 
-**Robot not responding to forces:**
-- Check force sensor connection and calibration
-- Verify force thresholds are appropriate
-- Ensure robot is in correct mode
-
-**Excessive robot movement:**
-- Reduce force sensitivity settings
-- Check for sensor noise or drift
-- Verify workspace limits are configured
-
-**Connection errors:**
-- Verify IP addresses for robot and sensor
-- Check network connectivity
-- Restart robot controller if necessary
-
-### Debug Mode
-Enable debug output for detailed information:
-```python
-DEBUG_MODE = True  # Enable detailed logging
-FORCE_DISPLAY = True  # Show real-time force values
-```
-
-## Advanced Configuration
-
-### Custom Force Mappings
-Modify force-to-velocity mappings in `ForceControl.py`:
-```python
-def force_to_velocity(force_vector):
-    # Custom mapping function
-    velocity = scale_factor * force_vector
-    return apply_limits(velocity)
-```
-
-### Sensor Calibration
-Perform sensor calibration before use:
-```python
-sensor.calibrate()  # Zero force/torque readings
-sensor.set_bias()   # Set bias compensation
-```
-
-## API Reference
-
-### Key Functions
-- `start_hand_guiding()` - Initialize hand guiding mode
-- `process_forces()` - Process force sensor data
-- `move_robot()` - Execute robot movement
-- `record_position()` - Save current robot position
-- `emergency_stop()` - Immediate robot stop
-
-For detailed API documentation, see the individual Python file headers.
-
-## Safety Warnings
-
-⚠️ **IMPORTANT SAFETY INFORMATION:**
-- Always maintain clear workspace around robot
-- Keep emergency stop readily accessible
-- Do not exceed maximum force limits
-- Monitor robot behavior continuously
-- Ensure proper sensor calibration before use
+For technical support, refer to Mecademic and ATI documentation.
