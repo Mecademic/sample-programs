@@ -11,19 +11,16 @@ This repository contains programming examples and demonstrations for Mecademic r
 ## Programming Languages & Examples
 
 ### 🐍 [Python Examples](./Python/)
-Ready-to-use Python applications demonstrating various robot capabilities:
 
 * **[HandGuiding](./Python/HandGuiding/)** - Force-controlled hand guiding with haptic feedback
 * **[PythonUI](./Python/PythonUI/)** - Complete PyQt5 GUI for robot control
 * **[ZaberProbing](./Python/ZaberProbing/)** - Integration with Zaber linear stages for automated probing
 
 ### ⚙️ [C Examples](./C/)
-Low-level C programming examples for Windows systems:
 
 * **[Basic TCP Communication](./C/basic-tcp-communication/)** - Socket-based robot control implementation
 
 ### 🏭 [PLC Integration](./PLC/)
-Industrial automation examples for various PLC systems:
 
 * **Coming Soon** - Allen-Bradley, Siemens, Schneider Electric, and more
 
