@@ -62,12 +62,6 @@ This comprehensive guide provides everything needed to integrate Mecademic robot
 
 ---
 
-## Additional Resources
-
-- **[Setup Documentation PDF](https://hs.mecademic.com/hubfs/Support%20Knowledge%20Base/Programming%20Examples/PLC%20Examples/Allen-Bradley%20CompactLogix%20PLC%20Add-On%20Instructions/Allen-Bradley%20CompactLogix%20PLC%20Add-On%20Instructions.pdf)** - Comprehensive setup guide
-
----
-
 ## Requirements
 
 ### Hardware Requirements
