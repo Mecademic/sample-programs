@@ -30,13 +30,6 @@ This example demonstrates the absolute basics of connecting to and controlling a
 5. **Performs test movements** in a square pattern
 6. **Deactivates** the robot safely
 
-## Key Features
-
-- **Smart homing**: Waits for actual robot response `[2002][Homing done.]` instead of fixed delays
-- **Safety prompts**: Warns before robot movement
-- **Error handling**: Comprehensive exception handling with troubleshooting tips
-- **Clean shutdown**: Properly closes connections
-
 ## Troubleshooting
 
 If you encounter connection issues:
@@ -44,10 +37,3 @@ If you encounter connection issues:
 2. Ensure robot is powered on and connected to network
 3. Verify no other application is connected to robot
 4. Check robot is not in error state (red LED)
-
-## Next Steps
-
-- Modify movement positions and patterns
-- Add status checking with `GetStatusRobot`
-- Explore other commands in the Meca500 manual
-- Implement real-time position feedback
