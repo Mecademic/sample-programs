@@ -13,6 +13,9 @@ Complete PyQt5 graphical interface for robot control with joystick integration a
 ### [ZaberProbing](./ZaberProbing/)
 Automated probing system integrating Meca500 with Zaber linear motion stages.
 
+### [TCP-Socket-Client](./TCP-Socket-Client/)
+Simple TCP/IP socket client demonstration for direct robot communication using Python's built-in socket library.
+
 ## Prerequisites
 
 - **Python 3.7+**

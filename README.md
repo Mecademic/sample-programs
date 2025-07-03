@@ -15,14 +15,28 @@ This repository contains programming examples and demonstrations for Mecademic r
 * **[HandGuiding](./Python/HandGuiding/)** - Force-controlled hand guiding with haptic feedback
 * **[PythonUI](./Python/PythonUI/)** - Complete PyQt5 GUI for robot control
 * **[ZaberProbing](./Python/ZaberProbing/)** - Integration with Zaber linear stages for automated probing
+* **[TCP-Socket-Client](./Python/TCP-Socket-Client/)** - Simple TCP/IP socket client demonstration
 
 ### ⚙️ [C Examples](./C/)
 
-* **[Basic TCP Communication](./C/basic-tcp-communication/)** - Socket-based robot control implementation
+* **[Basic TCP Communication](./C/Basic-TCP-Communication/)** - Socket-based robot control implementation
+
+### 🔷 [C# Examples](./C#/)
+
+* **[Meca500 Quick Start](./C#/Meca500-Quickstart/)** - Essential TCP/IP robot control with smart homing and movement patterns
+
+### 🔧 [LabVIEW Examples](./LabVIEW/)
+
+* **[LabVIEW Connection and Control](./LabVIEW/LabVIEW%20Connection%20and%20Control/)** - Basic robot control using TCP/IP commands with custom SubVIs
+* **[LabVIEW Monitoring](./LabVIEW/LabVIEW%20Monitoring/)** - Robot status monitoring and data display using the monitoring port
 
 ### 🏭 [PLC Integration](./PLC/)
 
-* **Coming Soon** - Allen-Bradley, Siemens, Schneider Electric, and more
+* **[Allen-Bradley CompactLogix](./PLC/Allen-Bradley-CompactLogix/)** - Complete integration using Add-On Instructions (AOI) with Ethernet/IP
+
+### 🌐 [TCP/IP Communication](./TCP-Communication/)
+
+* **[TCP/IP Socket Communication Guide](./TCP-Communication/)** - Foundational TCP/IP concepts and implementation examples
 
 
 ## Prerequisites
