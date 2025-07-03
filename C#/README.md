@@ -1,39 +1,44 @@
-# Meca500 C# Quick Start Example
+# C# Examples for Mecademic Meca500
 
-This example demonstrates the absolute basics of connecting to and controlling a Meca500 robot using C#.
+C# and .NET-based sample programs demonstrating robot control, real-time communication, and automation integration.
+
+## Examples
+
+### [Meca500 Quick Start](./Meca500-Quickstart/)
+Essential TCP/IP robot control example with smart homing, movement patterns, and comprehensive error handling.
 
 ## Prerequisites
 
-- Meca500 robot connected to network
-- Robot IP address known (default: 192.168.0.100)
-- Robot in normal mode (not recovery mode)
-- .NET 9.0 or later installed
+- **.NET 9.0+** (or compatible .NET version)
+- **Meca500 robot** connected to network
+- **Robot IP address** known (default: 192.168.0.100)
+- **Robot in normal mode** (not recovery mode)
 
-## Setup and Usage
+## Quick Start
 
-1. **Update Robot IP**: Edit `Meca500-Quickstart.cs` and change the `ROBOT_IP` constant to match your robot's IP address
-2. **Build the project**:
+1. Clone or download the C# example
+2. Configure robot IP in the source code
+3. Build and run:
    ```bash
    dotnet build
-   ```
-3. **Run the example**:
-   ```bash
    dotnet run
    ```
 
-## What This Example Does
+## Common Configuration
 
-1. **Connects** to the robot via TCP
-2. **Activates** the robot
-3. **Homes** the robot (waits for completion confirmation)
-4. **Sets motion parameters** (speed, velocity)
-5. **Performs test movements** in a square pattern
-6. **Deactivates** the robot safely
+```csharp
+// Standard connection settings used across examples
+const string ROBOT_IP = "192.168.0.100";
+const int ROBOT_PORT = 10000;
+```
+
+## Safety Warning
+
+⚠️ **These programs physically move the robot.** Ensure workspace is clear and emergency stop is accessible before running.
 
 ## Troubleshooting
 
-If you encounter connection issues:
-1. Check robot IP address in configuration
-2. Ensure robot is powered on and connected to network
-3. Verify no other application is connected to robot
-4. Check robot is not in error state (red LED)
+- **Connection issues**: Verify robot IP and network connectivity
+- **Build errors**: Ensure .NET SDK is installed with `dotnet --version`
+- **Runtime errors**: Check robot activation status and connection state
+- **Nullable warnings**: Update to nullable reference types or disable in project file
