@@ -33,6 +33,7 @@ This repository contains programming examples and demonstrations for Mecademic r
 ### 🏭 [PLC Integration](./PLC/)
 
 * **[Allen-Bradley CompactLogix](./PLC/Allen-Bradley-CompactLogix/)** - Complete integration using Add-On Instructions (AOI) with Ethernet/IP
+* **[Unitronics](./PLC/Ultronics/)** - TCP/IP integration with Unitronics Samba PLCs for direct robot control
 
 ### 🌐 [TCP/IP Communication](./TCP-Communication/)
 
