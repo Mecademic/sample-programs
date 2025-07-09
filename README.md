@@ -1,4 +1,8 @@
-![Mecademic](./docs/logo/MecaLogo-Dark.gif  "Mecademic")
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/logo/MecaLogo-Light.png">
+  <source media="(prefers-color-scheme: light)" srcset="./docs/logo/MecaLogo-Dark.png">
+  <img alt="Mecademic" src="./docs/logo/MecaLogo-Dark.png">
+</picture>
 
 # Mecademic Sample Programs
 
