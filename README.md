@@ -1,4 +1,4 @@
-![Mecademic](./docs/logo/MecaLogo-Black.png  "Mecademic")
+![Mecademic](./docs/logo/MecaLogo-Dark.gif  "Mecademic")
 
 # Mecademic Sample Programs
 
