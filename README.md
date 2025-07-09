@@ -1,4 +1,4 @@
-![Mecademic](./docs/logo/mecademic_logo.jpg  "Mecademic")
+![Mecademic](./docs/logo/MecaLogo-Black.png  "Mecademic")
 
 # Mecademic Sample Programs
 
@@ -7,6 +7,7 @@ This repository contains programming examples and demonstrations for Mecademic r
 ## Supported Robots
 
 * **Meca500 R3 and R4**
+* **MCS500**
 
 ## Programming Languages & Examples
 
@@ -34,6 +35,8 @@ This repository contains programming examples and demonstrations for Mecademic r
 
 * **[Allen-Bradley CompactLogix](./PLC/Allen-Bradley-CompactLogix/)** - Complete integration using Add-On Instructions (AOI) with Ethernet/IP
 * **[Unitronics](./PLC/Ultronics/)** - TCP/IP integration with Unitronics Samba PLCs for direct robot control
+* **[Omron](./PLC/Omron/)** - EtherCAT and Ethernet/IP integration with Omron PLCs including HMI examples
+* **[CodeSys](./PLC/CodeSys/)** - EtherCAT and Ethernet/IP integration with CodeSys PLCs and ControlWin emulation
 
 ### 🌐 [TCP/IP Communication](./TCP-Communication/)
 
