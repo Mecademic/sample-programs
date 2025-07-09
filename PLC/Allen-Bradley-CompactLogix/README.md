@@ -1,10 +1,6 @@
 # Allen-Bradley CompactLogix PLC Add-On Instructions
 
-![Mecademic Logo](./images/mecademic-logo.png)
-
 This comprehensive guide provides everything needed to integrate Mecademic robots (Meca500 and MCS500) with Allen-Bradley CompactLogix PLCs using Add-On Instructions (AOI) in Studio 5000. The Add-On Instructions simplify robot integration with Rockwell PLCs by providing a standardized interface that mirrors the robot's TCP/IP command interface, using the Ethernet/IP protocol for seamless communication and control.
-
-![Allen-Bradley Logo](./images/allen-bradley-logo.png) ![ODVA Logo](./images/odva-logo.png)
 
 ## Table of Contents
 
