@@ -1,0 +1,337 @@
+// ============================================================================
+// MODULE 1: BASIC MOVE COMMANDS FOR MECA500
+// ============================================================================
+// Overview: Introduction to fundamental robot motion commands and control modes
+// Duration: 45 minutes
+// Prerequisites: Basic robot setup and safety training
+// ============================================================================
+
+// ============================================================================
+// PROGRAM 1.1: LINEAR vs POINT-TO-POINT MOVES
+// ============================================================================
+// Objective: Demonstrate differences between Cartesian-space, joint-space, and direct joint control
+// Key Concepts:
+// • MoveLin - Straight-line TCP paths in Cartesian space
+// • MovePose - Joint-interpolated motion to Cartesian poses
+// • MoveJoints - Direct joint angle control
+// Safety: Ensure work area is clear before running demonstrations
+// ============================================================================
+
+// Set motion parameters
+SetCartLinVel(150)
+SetCartAngVel(45)
+SetCartAcc(50)
+SetJointVel(25)
+SetJointAcc(100)
+
+// Move to safe starting position
+SetWrf(0, 0, 0, 0, 0, 0)
+SetTrf(0, 0, 0, 0, 0, 0)
+MovePose(300, 0, 100, 0, 90, 0)
+
+// ----------------------------------------------------------------------------
+// DEMO A: LINEAR MOVES (Cartesian-space paths)
+// Expected Result: TCP follows perfect straight lines forming a precise square
+// ----------------------------------------------------------------------------
+
+// Using MoveLin - TCP follows straight lines (slower but predictable)
+MoveLin(271.19614, -87.96501, 52.3095, 0, 90, 0)   // Point 1 - top right
+Delay(0.2)
+
+MoveLin(271.19614, 87.03499, 52.3095, 0, 90, 0)    // Point 2 - top left
+Delay(0.2)
+
+MoveLin(196.19614, 87.03499, 52.3095, 0, 90, 0)    // Point 3 - bottom left
+Delay(0.2)
+
+MoveLin(196.19614, -87.96501, 52.3095, 0, 90, 0)   // Point 4 - bottom right
+Delay(0.2)
+
+MoveLin(271.19614, -87.96501, 52.3095, 0, 90, 0)   // Back to Point 1
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B: JOINT MOVES (Direct joint-space control)
+// Expected Result: Fastest motion with exact joint angles, TCP path unpredictable
+// ----------------------------------------------------------------------------
+
+// Using MoveJoints - direct joint angle control (fastest)
+MoveJoints(-23.615441, 85.677051, -20.563143, -25.732312, -67.320599, 10.527319)  // Point 1 - top right
+Delay(0.2)
+
+MoveJoints(23.392719, 85.542548, -20.215134, 25.456646, -67.472829, -10.336218)   // Point 2 - top left
+Delay(0.2)
+
+MoveJoints(34.593264, 72.428627, 23.873513, 34.755754, -95.184559, 3.587823)      // Point 3 - bottom left
+Delay(0.2)
+
+MoveJoints(-34.878422, 72.473281, 23.597534, -35.029728, -94.977242, -3.480279)   // Point 4 - bottom right
+Delay(0.2)
+
+MoveJoints(-23.615441, 85.677051, -20.563143, -25.732312, -67.320599, 10.527319)  // Back to Point 1
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO C: POSE MOVES (Joint-space path from Cartesian coordinates)
+// Expected Result: TCP takes curved/unpredictable paths between points
+// ----------------------------------------------------------------------------
+
+MovePose(271.19614, -87.96501, 52.3095, 0, 90, 0)  // Point 1 - top right
+Delay(0.2)
+
+MovePose(271.19614, 87.03499, 52.3095, 0, 90, 0)   // Point 2 - top left
+Delay(0.2)
+
+MovePose(196.19614, 87.03499, 52.3095, 0, 90, 0)   // Point 3 - bottom left
+Delay(0.2)
+
+MovePose(196.19614, -87.96501, 52.3095, 0, 90, 0)  // Point 4 - bottom right
+Delay(0.2)
+
+MovePose(271.19614, -87.96501, 52.3095, 0, 90, 0)  // Back to Point 1
+Delay(2)
+
+// Return to safe position
+MovePose(300, 0, 100, 0, 90, 0)
+
+// ============================================================================
+// PROGRAM 1.2: ABSOLUTE vs RELATIVE MOVES
+// ============================================================================
+// Objective: Demonstrate absolute positioning versus relative/incremental moves
+// Key Concepts:
+// • Absolute moves - Go to exact coordinates/angles
+// • Relative moves - Offset from current position
+// • WRF vs TRF relative motion
+// Safety: Verify robot position before executing relative moves
+// ============================================================================
+
+// Set motion parameters
+SetJointVel(25)
+SetCartLinVel(150)
+SetCartAngVel(45)
+SetCartAcc(50)
+SetJointAcc(100)
+
+// ----------------------------------------------------------------------------
+// DEMO A: RELATIVE CARTESIAN MOVES (WRF)
+// Expected Result: Robot creates square pattern using world-frame relative offsets
+// ----------------------------------------------------------------------------
+
+// Start from Point 1, move relative to current position
+MoveLin(271.19614, -87.96501, 52.3095, 0, 90, 0)   // Move to Point 1 first
+Delay(0.2)
+
+// Move +175mm in Y direction (up) - Point 1 to Point 2
+MoveLinRelWrf(0, 175, 0, 0, 0, 0)                  // Point 2 - relative
+Delay(0.2)
+
+// Move -75mm in X direction (left) - Point 2 to Point 3
+MoveLinRelWrf(-75, 0, 0, 0, 0, 0)                  // Point 3 - relative
+Delay(0.2)
+
+// Move -175mm in Y direction (down) - Point 3 to Point 4
+MoveLinRelWrf(0, -175, 0, 0, 0, 0)                 // Point 4 - relative
+Delay(0.2)
+
+// Move +75mm in X direction (right) - Point 4 to Point 1
+MoveLinRelWrf(75, 0, 0, 0, 0, 0)                   // Point 1 - relative
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B: RELATIVE CARTESIAN MOVES (TRF)
+// Expected Result: Square pattern using tool-frame relative offsets (rotated 90°)
+// ----------------------------------------------------------------------------
+
+// Start from Point 1, move relative to current position
+MoveLin(271.19614, -87.96501, 52.3095, 0, 90, 0)   // Move to Point 1 first
+Delay(0.2)
+
+// Move +175mm in Y direction (up) - Point 1 to Point 2
+MoveLinRelTrf(0, 175, 0, 0, 0, 0)                  // Point 2 - relative
+Delay(0.2)
+
+// Move -75mm in Z direction (of TRF) - Point 2 to Point 3
+MoveLinRelTrf(0, 0, -75, 0, 0, 0)                  // Point 3 - relative
+Delay(0.2)
+
+// Move -175mm in Y direction (down) - Point 3 to Point 4
+MoveLinRelTrf(0, -175, 0, 0, 0, 0)                 // Point 4 - relative
+Delay(0.2)
+
+// Move +75mm in Z direction (of TRF) - Point 4 to Point 1
+MoveLinRelTrf(0, 0, 75, 0, 0, 0)                   // Point 1 - relative
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO C: RELATIVE JOINT MOVES
+// Expected Result: Square pattern using relative joint angle increments
+// ----------------------------------------------------------------------------
+
+// Start from Point 1 using absolute joint positioning
+MoveJoints(-23.615441, 85.677051, -20.563143, -25.732312, -67.320599, 10.527319)  // Point 1
+Delay(0.2)
+
+// Point 1 to Point 2 - relative joint movements
+MoveJointsRel(47.00816, -0.134503, 0.348009, 51.188958, -0.15223, -20.863537)     // Point 2 - relative
+Delay(0.2)
+
+// Point 2 to Point 3 - relative joint movements
+MoveJointsRel(11.200545, -13.113921, 44.088647, 9.299108, -27.71173, 13.924041)   // Point 3 - relative
+Delay(0.2)
+
+// Point 3 to Point 4 - relative joint movements
+MoveJointsRel(-69.471686, 0.044654, -0.275979, -69.785482, 0.207317, -7.068102)   // Point 4 - relative
+Delay(0.2)
+
+// Point 4 to Point 1 - relative joint movements
+MoveJointsRel(11.262981, 13.20377, -44.160677, 9.297416, 27.656643, 14.007598)    // Point 1 - relative
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO D: RELATIVE ROTATIONS
+// Expected Result: Wrist rotates 90° and returns using relative joint moves
+// ----------------------------------------------------------------------------
+
+// Small wrist rotations using relative joint moves
+MoveJointsRel(0, 0, 0, 0, -25, 90)                   // Rotate wrist 90 degrees
+Delay(0.2)
+
+MoveJointsRel(0, 0, 0, 0, 25, -90)                  // Rotate wrist back
+Delay(0.2)
+
+// Return to safe position
+MovePose(300, 0, 100, 0, 90, 0)
+
+// ============================================================================
+// PROGRAM 1.3: SPEED AND ACCELERATION EFFECTS
+// ============================================================================
+// Objective: Demonstrate how speed settings affect robot motion
+// Key Concepts:
+// • Cartesian vs Joint speed parameters
+// • Speed/acceleration trade-offs
+// • Visual differences at various speeds
+// Safety: Start with low speeds, gradually increase
+// ============================================================================
+
+SetJointVelLimit(150)
+
+// Move to starting position with default settings
+SetJointVel(25)
+SetCartLinVel(150)
+SetCartAngVel(45)
+SetCartAcc(50)
+SetJointAcc(100)
+MovePose(271.19614, -87.96501, 52.3095, 0, 90, 0)
+
+// ----------------------------------------------------------------------------
+// DEMO A: MEDIUM SPEED - CARTESIAN MOVEMENTS
+// Expected Result: Smooth, moderate-speed linear motion
+// ----------------------------------------------------------------------------
+
+SetCartLinVel(150)
+SetCartAngVel(45)
+SetCartAcc(50)
+
+// Medium speed square - CARTESIAN SPACE
+MoveLin(271.19614, 87.03499, 52.3095, 0, 90, 0)    // Point 2 - medium linear
+Delay(0.2)
+
+MoveLin(196.19614, 87.03499, 52.3095, 0, 90, 0)    // Point 3 - medium linear
+Delay(0.2)
+
+MoveLin(196.19614, -87.96501, 52.3095, 0, 90, 0)   // Point 4 - medium linear
+Delay(0.2)
+
+MoveLin(271.19614, -87.96501, 52.3095, 0, 90, 0)   // Point 1 - medium linear
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO A2: MEDIUM SPEED - JOINT MOVEMENTS
+// Expected Result: Smooth, moderate-speed joint motion
+// ----------------------------------------------------------------------------
+
+SetJointVel(25)
+SetJointAcc(50)
+
+// Medium speed square - JOINT SPACE
+MovePose(271.19614, 87.03499, 52.3095, 0, 90, 0)   // Point 2 - medium joint
+Delay(0.2)
+
+MovePose(196.19614, 87.03499, 52.3095, 0, 90, 0)   // Point 3 - medium joint
+Delay(0.2)
+
+MovePose(196.19614, -87.96501, 52.3095, 0, 90, 0)  // Point 4 - medium joint
+Delay(0.2)
+
+MovePose(271.19614, -87.96501, 52.3095, 0, 90, 0)  // Point 1 - medium joint
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B: HIGH SPEED - CARTESIAN MOVEMENTS
+// Expected Result: Fast linear motion, may blur visual details
+// ----------------------------------------------------------------------------
+
+SetCartLinVel(400)
+SetCartAngVel(150)
+SetCartAcc(100)
+
+// High speed square - CARTESIAN SPACE
+MoveLin(271.19614, 87.03499, 52.3095, 0, 90, 0)    // Point 2 - fast linear
+Delay(0.2)
+
+MoveLin(196.19614, 87.03499, 52.3095, 0, 90, 0)    // Point 3 - fast linear
+Delay(0.2)
+
+MoveLin(196.19614, -87.96501, 52.3095, 0, 90, 0)   // Point 4 - fast linear
+Delay(0.2)
+
+MoveLin(271.19614, -87.96501, 52.3095, 0, 90, 0)   // Point 1 - fast linear
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B2: HIGH SPEED - JOINT MOVEMENTS
+// Expected Result: Very fast joint motion, demonstrates maximum performance
+// ----------------------------------------------------------------------------
+
+SetJointVel(100)
+SetJointAcc(100)
+
+// High speed square - JOINT SPACE
+MovePose(271.19614, 87.03499, 52.3095, 0, 90, 0)   // Point 2 - fast joint
+Delay(0.2)
+
+MovePose(196.19614, 87.03499, 52.3095, 0, 90, 0)   // Point 3 - fast joint
+Delay(0.2)
+
+MovePose(196.19614, -87.96501, 52.3095, 0, 90, 0)  // Point 4 - fast joint
+Delay(0.2)
+
+MovePose(271.19614, -87.96501, 52.3095, 0, 90, 0)  // Point 1 - fast joint
+Delay(2)
+
+/* ============================================================================
+SUMMARY
+============================================================================
+SECTION 1 – Basic Move Commands   | Duration ≈ 45 min
+----------------------------------------------------------------------------
+
+KEY DEMOS
+• Demo A – Linear moves (MoveLin) – straight-line Cartesian path  
+• Demo B – Joint moves (MoveJoints) – fastest, posture-controlled  
+• Demo C – Pose moves (MovePose) – joint‑optimised Cartesian route  
+• Demo D – Relative moves in WRF/TRF – efficient teaching offsets  
+• Demo E – Speed & acceleration effects
+
+QUICK REFERENCE COMMANDS
+MoveLin, MovePose, MoveJoints, MoveLinRelWrf, MoveLinRelTrf,  
+SetJointVel, SetCartLinVel, SetCartAcc
+
+COMMON WARNINGS & FIXES
+• “Path deviation” → use MoveLin instead of MovePose  
+• “Joint limit reached” → adjust starting pose or use MoveJoints
+
+PRODUCTION TAKEAWAYS
+• Pick motion type based on path fidelity vs cycle time.  
+• Teach once, reuse with frames & relative moves.  
+• Tune speed/acc early to avoid later collision re-validation.
+*/

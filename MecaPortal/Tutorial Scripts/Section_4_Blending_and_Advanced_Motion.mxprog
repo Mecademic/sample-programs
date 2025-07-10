@@ -1,0 +1,414 @@
+// ============================================================================
+// MODULES 4 & 5: BLENDING AND ADVANCED MOTION CONTROL FOR MECA500
+// ============================================================================
+
+// ============================================================================
+// MODULE 4: BLENDING FOR MECA500
+// ============================================================================
+// Overview: Master motion blending for optimized cycle times
+// Duration: 30 minutes
+// Prerequisites: Modules 1-3 - Basic motion, frames, and configurations
+// ============================================================================
+
+// ============================================================================
+// PROGRAM 4.1: BLENDING EFFECTS ON PATH ACCURACY
+// ============================================================================
+// Objective: Demonstrate how blending percentage affects corner rounding
+// Key Concepts:
+// • SetBlending(0) = Sharp corners with full stops
+// • SetBlending(100) = Maximum corner rounding
+// • Higher speeds create larger blend radii
+// Safety: Account for path deviation when using high blending values
+// ============================================================================
+
+// Set motion parameters
+SetJointVel(75)
+SetJointAcc(75)
+SetCartLinVel(200)
+SetCartAngVel(100)
+SetCartAcc(100)
+SetJointVelLimit(150)
+SetBlending(0)
+
+// Reset frames
+SetWrf(0, 0, 0, 0, 0, 0)
+SetTrf(0, 0, 0, 0, 0, 0)
+
+// Move to safe starting position
+MovePose(300, 0, 100, 0, 90, 0)
+Delay(1)
+
+// ----------------------------------------------------------------------------
+// DEMO A: NO BLENDING - SHARP CORNERS WITH FULL STOPS
+// Expected Result: Robot completely stops at each corner point
+// ----------------------------------------------------------------------------
+
+SetBlending(0)  // Disable blending completely
+
+// Execute square path - watch for full stops at corners
+MoveLin(271, -63, 52, 0, 90, 0)    // Start position
+Delay(0.1)                          // Small delay to emphasize stop
+
+MoveLin(271, 63, 52, 0, 90, 0)     // Move +Y (left side)
+Delay(0.1)                          // Full stop visible
+
+MoveLin(196, 63, 52, 0, 90, 0)     // Move -X (top side)
+Delay(0.1)                          // Full stop visible
+
+MoveLin(196, -63, 52, 0, 90, 0)    // Move -Y (right side)
+Delay(0.1)                          // Full stop visible
+
+MoveLin(271, -63, 52, 0, 90, 0)    // Move +X (bottom side)
+Delay(0.1)                          // Full stop visible
+
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B: MAXIMUM BLENDING - SIGNIFICANT CORNER ROUNDING
+// Expected Result: Corners cut by ~30-40mm, smooth continuous motion
+// ----------------------------------------------------------------------------
+
+SetBlending(100)  // Maximum blending
+
+// Same square path - watch significant corner rounding
+MoveLin(271, -63, 52, 0, 90, 0)    // Start position
+MoveLin(271, 63, 52, 0, 90, 0)     // Move +Y - corner rounds ~30mm
+MoveLin(196, 63, 52, 0, 90, 0)     // Move -X - corner rounds ~30mm
+MoveLin(196, -63, 52, 0, 90, 0)    // Move -Y - corner rounds ~30mm
+MoveLin(271, -63, 52, 0, 90, 0)    // Move +X - corner rounds ~30mm
+
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO C: SPEED EFFECT ON BLENDING RADIUS
+// Expected Result: Blend radius increases to ~40-50mm at higher speed
+// ----------------------------------------------------------------------------
+
+SetBlending(100)  // Keep maximum blending
+
+// High speed - large blend radius
+SetCartLinVel(400)  // High speed
+MoveLin(271, -63, 52, 0, 90, 0)
+MoveLin(271, 63, 52, 0, 90, 0)     // Large corner rounding
+MoveLin(196, 63, 52, 0, 90, 0)
+MoveLin(196, -63, 52, 0, 90, 0)
+MoveLin(271, -63, 52, 0, 90, 0)
+Delay(2)
+
+// Return to safe position
+SetCartLinVel(150)
+MovePose(300, 0, 100, 0, 90, 0)
+Delay(1)
+
+// ============================================================================
+// PROGRAM 4.2: BLENDING LIMITATIONS AND RULES
+// ============================================================================
+// Objective: Show when blending works and when it doesn't
+// Key Concepts:
+// • Blending only works between same motion command types
+// • Cannot blend between MoveLin and MovePose
+// • Cartesian commands blend together, joint commands blend together
+// Safety: Be aware of full stops when mixing motion types
+// ============================================================================
+
+// Reset motion parameters
+SetJointVel(50)
+SetJointAcc(75)
+SetCartLinVel(200)
+SetCartAngVel(100)
+SetCartAcc(100)
+SetJointVelLimit(150)
+SetBlending(100)  // Maximum blending enabled
+
+// ----------------------------------------------------------------------------
+// DEMO A: SUCCESSFUL BLENDING - MoveLin TO MoveLin
+// Expected Result: Smooth transitions at all corners
+// ----------------------------------------------------------------------------
+
+// Move to start of square
+MovePose(271, -63, 62, 0, 90, 0)
+Delay(0.5)
+// Square with MoveLin commands - blending works
+MoveLin(271, -63, 62, 0, 90, 0)    // Point 1
+MoveLin(271, 63, 62, 0, 90, 0)     // Point 2 - smooth transition
+MoveLin(196, 63, 62, 0, 90, 0)     // Point 3 - smooth transition
+MoveLin(196, -63, 62, 0, 90, 0)    // Point 4 - smooth transition
+MoveLin(271, -63, 62, 0, 90, 0)    // Back to Point 1 - smooth
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B: SUCCESSFUL BLENDING - MovePose TO MovePose
+// Expected Result: Smooth transitions in joint space
+// ----------------------------------------------------------------------------
+
+// Square with MovePose commands - blending works
+MovePose(271, -63, 62, 0, 90, 0)   // Point 1
+MovePose(271, 63, 62, 0, 90, 0)    // Point 2 - smooth transition
+MovePose(196, 63, 62, 0, 90, 0)    // Point 3 - smooth transition
+MovePose(196, -63, 62, 0, 90, 0)   // Point 4 - smooth transition
+MovePose(271, -63, 62, 0, 90, 0)   // Back to Point 1 - smooth
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO C: NO BLENDING - MIXED MOTION TYPES
+// Expected Result: Full stops at each transition between motion types
+// ----------------------------------------------------------------------------
+
+// Square with alternating MoveLin and MovePose - NO blending
+MoveLin(271, -63, 62, 0, 90, 0)    // Start with MoveLin
+MovePose(271, 63, 62, 0, 90, 0)    // Change to MovePose - FULL STOP
+MoveLin(196, 63, 62, 0, 90, 0)     // Change to MoveLin - FULL STOP
+MovePose(196, -63, 62, 0, 90, 0)   // Change to MovePose - FULL STOP
+MoveLin(271, -63, 62, 0, 90, 0)    // Change to MoveLin - FULL STOP
+Delay(2)
+
+// ============================================================================
+// MODULE 5: ADVANCED MOTION CONTROL FOR MECA500
+// ============================================================================
+// Overview: Advanced motion modes for precise timing and synchronization
+// Duration: 45 minutes
+// Prerequisites: Modules 1-4 - All basic motion concepts
+// ============================================================================
+
+// ============================================================================
+// PROGRAM 5.1: TIME-BASED vs VELOCITY-BASED MOTION
+// ============================================================================
+// Objective: Demonstrate the difference between velocity and time-based control
+// Key Concepts:
+// • Velocity mode: Motion time varies with distance
+// • Time mode: All moves take exact specified duration
+// • SetMoveMode(0) = velocity, SetMoveMode(1) = time
+// Safety: Time mode may result in high speeds for long moves
+// ============================================================================
+
+// Reset parameters
+SetJointVel(50)
+SetCartLinVel(200)
+SetCartAngVel(90)
+SetCartAcc(100)
+SetJointAcc(100)
+SetBlending(0)     // No blending for accurate timing demonstration
+
+// Reset frames
+SetWrf(0, 0, 0, 0, 0, 0)
+SetTrf(0, 0, 0, 0, 0, 0)
+
+// Define three positions at different distances from center
+// Position A: Close (50mm from center)
+// Position B: Medium (100mm from center)  
+// Position C: Far (150mm from center)
+
+// ----------------------------------------------------------------------------
+// DEMO A: VELOCITY CONTROL (Default mode)
+// Expected Result: Short moves ~0.25s, medium ~0.5s, long ~0.75s
+// ----------------------------------------------------------------------------
+
+SetMoveMode(0)     // Velocity-based mode (default)
+
+// Move to center position
+MovePose(250, 0, 80, 0, 90, 0)
+Delay(1)
+
+// Motion sequence with fixed velocity - observe different durations
+MoveLin(250, 50, 80, 0, 90, 0)    // Short move (50mm at 200mm/s = ~0.25s)
+MoveLin(250, 0, 80, 0, 90, 0)     // Return to center (50mm at 200mm/s = ~0.25s)
+MoveLin(250, 100, 80, 0, 90, 0)   // Medium move (100mm at 200mm/s = ~0.5s)
+MoveLin(250, 0, 80, 0, 90, 0)     // Return to center (100mm at 200mm/s = ~0.5s)
+MoveLin(250, 150, 80, 0, 90, 0)   // Long move (150mm at 200mm/s = ~0.75s)
+MoveLin(250, 0, 80, 0, 90, 0)     // Return to center (150mm at 200mm/s = ~0.75s)
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B: TIME-BASED CONTROL
+// Expected Result: All moves take exactly 0.5 seconds regardless of distance
+// ----------------------------------------------------------------------------
+
+SetMoveMode(1)     // Time-based mode
+SetMoveDuration(0.5) // All moves will take 0.5 seconds
+
+// Same motion sequence - observe identical durations
+MoveLin(250, 50, 80, 0, 90, 0)    // Short move (now takes 0.5s)
+MoveLin(250, 0, 80, 0, 90, 0)     // Return to center (0.5s)
+MoveLin(250, 100, 80, 0, 90, 0)   // Medium move (0.5s)
+MoveLin(250, 0, 80, 0, 90, 0)     // Return to center (0.5s)
+MoveLin(250, 150, 80, 0, 90, 0)   // Long move (0.5s)
+MoveLin(250, 0, 80, 0, 90, 0)     // Return to center (0.5s)
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO C: PRACTICAL APPLICATION - SYNCHRONIZED PICK & PLACE
+// Expected Result: Predictable 3.9s cycle time (6 moves @ 0.5s + delays)
+// ----------------------------------------------------------------------------
+
+SetMoveDuration(0.5)  // Each move takes 0.5 seconds
+
+// Simulated pick and place with guaranteed timing
+MoveLin(220, -50, 100, 0, 90, 0)  // Approach pick (0.5s)
+MoveLin(220, -50, 60, 0, 90, 0)   // Lower to pick (0.5s)
+Delay(0.3)                         // Gripper close
+MoveLin(220, -50, 100, 0, 90, 0)  // Lift part (0.5s)
+MoveLin(280, 50, 100, 0, 90, 0)   // Move to place (0.5s)
+MoveLin(280, 50, 60, 0, 90, 0)    // Lower to place (0.5s)
+Delay(0.3)                         // Gripper open
+MoveLin(280, 50, 100, 0, 90, 0)   // Depart (0.5s)
+
+// Return to velocity mode
+SetMoveMode(0)
+Delay(2)
+
+// ============================================================================
+// PROGRAM 5.2: VELOCITY-BASED MOTION CONTROL
+// ============================================================================
+// Objective: Demonstrate velocity-mode commands and timeout behavior
+// Key Concepts:
+// • Continuous motion until timeout or new command
+// • WRF vs TRF velocity control
+// • SetVelTimeout for safety
+// Safety: Always set appropriate timeout values
+// ============================================================================
+
+// Reset parameters and ensure safe starting configuration
+SetJointVel(50)
+SetCartLinVel(200)
+SetCartAcc(600)
+SetJointAcc(150)
+SetBlending(100)
+SetVelTimeout(0.5)  // Set longer timeout for demonstration (default is 0.050s)
+
+// Move to safe starting position
+MovePose(250, 0, 100, 0, 90, 0)
+Delay(1)
+
+// ----------------------------------------------------------------------------
+// DEMO A: BASIC VELOCITY MOTION WITH TIMEOUT
+// Expected Result: Robot moves for 0.5s then automatically stops
+// ----------------------------------------------------------------------------
+
+SetVelTimeout(0.5)  // 500ms timeout for clear demonstration
+
+// Start linear velocity motion in WRF
+MoveLinVelWrf(0, 100, 0, 0, 0, 0)   // Move +Y at 50mm/s
+// Robot moves for 0.5s then automatically decelerates to stop
+Delay(1)  // Wait for complete stop
+
+// Move back with negative velocity
+MoveLinVelWrf(0, -100, 0, 0, 0, 0)  // Move -Y at 50mm/s
+// Again stops after timeout
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B: TRF vs WRF VELOCITY MODES
+// Expected Result: WRF moves in world axes, TRF moves in tool axes
+// ----------------------------------------------------------------------------
+
+// Rotate TRF to show difference
+MovePose(250, 0, 100, 0, 90, 45)    // 45° rotation around Z
+Delay(1)
+
+// Motion in WRF - moves in world X regardless of tool orientation
+MoveLinVelWrf(50, 0, 0, 0, 0, 0)    // World +X direction
+Delay(1)  // Let timeout stop motion
+
+// Motion in TRF - moves in tool X (rotated 45°)
+MoveLinVelTrf(50, 0, 0, 0, 0, 0)    // Tool +X direction
+Delay(1)  // Let timeout stop motion
+
+// ----------------------------------------------------------------------------
+// DEMO C: JOINT VELOCITY MODE
+// Expected Result: Direct control of individual joint speeds
+// ----------------------------------------------------------------------------
+
+// Return to neutral pose
+MovePose(250, 0, 100, 0, 90, 0)
+Delay(1)
+
+// Rotate base joint only
+MoveJointsVel(30, 0, 0, 0, 0, 0)    // Joint 1 at 30°/s
+Delay(1)  // Let timeout stop
+
+// Multiple joints simultaneously
+MoveJointsVel(-20, 20, -20, 0, 0, 40)  // Complex coordinated motion
+Delay(1)  // Let timeout stop
+
+// Return to home position
+SetVelTimeout(0.050)  // Reset to default timeout
+MoveJoints(0, 0, 0, 0, 0, 0)
+Delay(2)
+
+// ============================================================================
+// PROGRAM 5.3: MOTION SYNCHRONIZATION
+// ============================================================================
+// Objective: Demonstrate reliable synchronization using checkpoints
+// Key Concepts:
+// • SetCheckpoint for precise timing signals
+// • Checkpoints work with motion blending
+// • Essential for PLC/vision integration
+// Safety: Ensure external equipment is ready before triggering
+// ============================================================================
+
+// Reset parameters
+SetJointVel(50)
+SetCartLinVel(200)
+SetBlending(0)     // Start with no blending
+
+// ----------------------------------------------------------------------------
+// DEMO A: BASIC CHECKPOINT USAGE
+// Expected Result: Checkpoints triggered at exact motion completion
+// ----------------------------------------------------------------------------
+
+// Multi-step assembly sequence with checkpoints
+MovePose(250, -30, 100, 0, 90, 0)     // Move to approach position
+
+SetCheckpoint(1)                        // Mark: Reached approach position
+MoveLin(250, -30, 60, 0, 90, 0)       // Approach part
+
+SetCheckpoint(2)                        // Mark: Ready to grasp
+Delay(0.5)                             // Simulate gripper close
+
+SetCheckpoint(3)                        // Mark: Part grasped
+MoveLin(250, -30, 100, 0, 90, 0)      // Lift part
+
+SetCheckpoint(4)                        // Mark: Part lifted - safe to move
+MoveLin(280, 30, 100, 0, 90, 0)       // Move to place position
+
+SetCheckpoint(5)                        // Mark: Above place position
+MoveLin(280, 30, 60, 0, 90, 0)        // Lower part
+
+SetCheckpoint(6)                        // Mark: Part in place
+Delay(0.5)                             // Simulate gripper open
+
+SetCheckpoint(7)                        // Mark: Part released
+MoveLin(280, 30, 100, 0, 90, 0)       // Depart
+
+SetCheckpoint(8)                        // Mark: Cycle complete
+Delay(2)
+
+// Return to home
+MoveJoints(0, 0, 0, 0, 0, 0)
+
+/* ============================================================================
+SUMMARY
+============================================================================
+SECTION 4 – Blending, Velocity & Synchronisation   | Duration ≈ 55 min
+----------------------------------------------------------------------------
+
+KEY DEMOS
+• Demo A – Sharp corners vs max blending (MoveLin/MovePose consistency)  
+• Demo B – Speed effect on blend radius  
+• Demo C – Velocity control modes: default, time-based, joint-velocity  
+• Demo D – TRF vs WRF velocity moves  
+• Demo E – Synchronized pick-&-place with checkpoints
+
+QUICK REFERENCE COMMANDS
+SetBlending, MoveLin, MovePose, MoveLinVelWrf, MoveLinVelTrf,  
+MoveJointsVel, SetVelTimeout, SetCheckpoint, WaitCheckpoint
+
+COMMON WARNINGS & FIXES
+• Blending works only between identical motion types – mix causes stop.  
+• Always set VelTimeout when streaming velocity commands to avoid runaway.  
+
+PRODUCTION TAKEAWAYS
+• Use blending to shave seconds off non-critical transfer moves.  
+• Time mode guarantees takt-time; velocity mode enables joystick/manual teach.  
+• Checkpoints give PLC-grade determinism for external-equipment sync.
+*/
