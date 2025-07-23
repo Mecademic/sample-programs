@@ -1,0 +1,285 @@
+// ============================================================================
+// MODULE 2: REFERENCE FRAMES FOR MECA500
+// ============================================================================
+// Overview: Master Work Reference Frame (WRF) and Tool Reference Frame (TRF) concepts
+// Duration: 45 minutes
+// Prerequisites: Module 1 - Basic Move Commands
+// ============================================================================
+
+// ============================================================================
+// PROGRAM 2.1: WRF (WORK REFERENCE FRAME) DEMO
+// ============================================================================
+// Objective: Show how WRF simplifies programming for pallet/fixture applications
+// Key Concepts:
+// • WRF transforms robot coordinates to user-defined coordinates
+// • Positions become simple offsets from WRF origin
+// • Same program works at different locations/orientations
+// Safety: Clear work area of obstacles before running
+// ============================================================================
+
+// Set motion parameters
+SetJointVel(25)
+SetCartLinVel(150)
+SetCartAngVel(45)
+SetCartAcc(50)
+SetJointAcc(100)
+SetBlending(0)
+
+// ----------------------------------------------------------------------------
+// DEMO A: POSITIONS RELATIVE TO ROBOT BASE (Inefficient Method)
+// Expected Result: Complex coordinates required for each position
+// ----------------------------------------------------------------------------
+
+// Reset WRF to coincide with BRF (robot base)
+SetWrf(0, 0, 0, 0, 0, 0)
+SetTrf(0, 0, 0, 0, 0, 0)
+
+// Move to safe position above pallet
+MovePose(271, -63, 82, 0, 90, 0)
+Delay(0.5)
+
+// Visit pallet positions - all coordinates relative to robot base
+MoveLin(271, -63, 52, 0, 90, 0)   // Pallet Position 1
+Delay(0.5)
+
+// Rapid insertion movements - complex coordinates relative to robot base
+MoveLin(271, -63, 67, 0, 90, 0)   // Lift
+MoveLin(271, -13, 67, 0, 90, 0)   // Move to position 2
+MoveLin(271, -13, 52, 0, 90, 0)   // Insert
+MoveLin(271, -13, 67, 0, 90, 0)   // Lift
+MoveLin(221, -13, 67, 0, 90, 0)   // Move to position 3
+MoveLin(221, -13, 52, 0, 90, 0)   // Insert
+MoveLin(221, -13, 67, 0, 90, 0)   // Lift
+MoveLin(221, -63, 67, 0, 90, 0)   // Move to position 4
+MoveLin(221, -63, 52, 0, 90, 0)   // Insert
+MoveLin(221, -63, 67, 0, 90, 0)   // Lift
+MoveLin(271, -63, 67, 0, 90, 0)   // Return to position 1
+MoveLin(271, -63, 52, 0, 90, 0)   // Insert
+
+// Return to safe position
+MovePose(271, -63, 82, 0, 90, 0)
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B: DEFINE WRF AT PALLET ORIGIN (Efficient Method)
+// Expected Result: Simple coordinate offsets (0,0), (0,50), (-50,0), etc.
+// ----------------------------------------------------------------------------
+
+MovePose(271, -63, 82, 0, 90, 0)
+
+// Move to pallet corner
+MoveLin(271, -63, 52, 0, 90, 0)
+
+// Define WRF at current position (pallet corner)
+SetWrf(271, -63, 52, 0, 90, 0)
+
+// Now at origin of work area
+MoveLin(0, 0, 0, 0, 0, 0)
+
+// Rapid inserts using simple WRF coordinates
+MoveLin(-15, 0, 0, 0, 0, 0)       // Lift 15mm
+MoveLin(-15, 50, 0, 0, 0, 0)      // Move +50mm Y
+MoveLin(0, 50, 0, 0, 0, 0)        // Insert
+MoveLin(-15, 50, 0, 0, 0, 0)      // Lift
+MoveLin(-15, 50, -50, 0, 0, 0)    // Move -50mm X
+MoveLin(0, 50, -50, 0, 0, 0)      // Insert
+MoveLin(-15, 50, -50, 0, 0, 0)    // Lift
+MoveLin(-15, 0, -50, 0, 0, 0)     // Move -50mm Y
+MoveLin(0, 0, -50, 0, 0, 0)       // Insert
+MoveLin(-15, 0, -50, 0, 0, 0)     // Lift
+MoveLin(-15, 0, 0, 0, 0, 0)       // Move +50mm X
+MoveLin(0, 0, 0, 0, 0, 0)         // Insert at origin
+MoveLin(-15, 0, 0, 0, 0, 0)       // Lift
+
+// Return to safe position
+MoveLin(-30, 0, 0, 0, 0, 0)
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO C: CHANGE WRF LOCATION (Show Automatic Position Adaptation)
+// Expected Result: Same program works at new location without changes
+// ----------------------------------------------------------------------------
+
+// Move WRF to new pallet location (shifted -50mm X and +125mm Y from original)
+SetWrf(221, 62, 52, 0, 90, 0)
+
+// Move to safe position at new location
+MoveLin(-30, 0, 0, 0, 0, 0)
+Delay(0.5)
+MoveLin(0, 0, 0, 0, 0, 0)
+
+// Same program works at new location - no coordinate changes needed!
+MoveLin(-15, 0, 0, 0, 0, 0)       // Lift
+MoveLin(-15, 50, 0, 0, 0, 0)      // Move +50mm Y
+MoveLin(0, 50, 0, 0, 0, 0)        // Insert
+MoveLin(-15, 50, 0, 0, 0, 0)      // Lift
+MoveLin(-15, 50, -50, 0, 0, 0)    // Move -50mm X
+MoveLin(0, 50, -50, 0, 0, 0)      // Insert
+MoveLin(-15, 50, -50, 0, 0, 0)    // Lift
+MoveLin(-15, 0, -50, 0, 0, 0)     // Move -50mm Y
+MoveLin(0, 0, -50, 0, 0, 0)       // Insert
+MoveLin(-15, 0, -50, 0, 0, 0)     // Lift
+MoveLin(-15, 0, 0, 0, 0, 0)       // Move +50mm X
+MoveLin(0, 0, 0, 0, 0, 0)         // Insert
+MoveLin(-15, 0, 0, 0, 0, 0)       // Lift
+
+// Return to safe position
+MoveLin(-30, 0, 0, 0, 0, 0)
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO D: ROTATED WRF (Show Frame Rotation Effects)
+// Expected Result: Pattern rotates with frame, coordinates remain the same
+// ----------------------------------------------------------------------------
+
+// Define WRF with 90-degree rotation about Z
+SetWrf(250, -38, 52, 0, 90, 90)
+
+// Move to safe position in rotated frame
+MoveLin(-30, 0, 0, 0, 0, 0)
+Delay(0.5)
+MoveLin(0, 0, 0, 0, 0, 0)
+
+// Same coordinates now follow rotated frame
+MoveLin(-15, 0, 0, 0, 0, 0)       // Lift (now in rotated coordinates)
+MoveLin(-15, 50, 0, 0, 0, 0)      // Move +50mm Y (rotated)
+MoveLin(0, 50, 0, 0, 0, 0)        // Insert
+MoveLin(-15, 50, 0, 0, 0, 0)      // Lift
+MoveLin(-15, 50, -50, 0, 0, 0)    // Move -50mm X (rotated)
+MoveLin(0, 50, -50, 0, 0, 0)      // Insert
+MoveLin(-15, 50, -50, 0, 0, 0)    // Lift
+MoveLin(-15, 0, -50, 0, 0, 0)     // Move -50mm Y (rotated)
+MoveLin(0, 0, -50, 0, 0, 0)       // Insert
+MoveLin(-15, 0, -50, 0, 0, 0)     // Lift
+MoveLin(-15, 0, 0, 0, 0, 0)       // Move +50mm X (rotated)
+MoveLin(0, 0, 0, 0, 0, 0)         // Insert
+
+// Return to safe position
+MoveLin(-30, 0, 0, 0, 0, 0)
+Delay(2)
+
+// Reset WRF for next program
+SetWrf(0, 0, 0, 0, 0, 0)
+MovePose(271, -63, 82, 0, 90, 0)
+
+// ============================================================================
+// PROGRAM 2.2: TRF (TOOL REFERENCE FRAME) DEMO
+// ============================================================================
+// Objective: Show tool-centric movements for pick-and-place with gripper
+// Key Concepts:
+// • TRF defines tool center point (TCP) location
+// • Compensates for tool dimensions automatically
+// • Enables tool-relative movements and rotations
+// Safety: Account for tool dimensions to avoid collisions
+// ============================================================================
+
+// Reset frames
+SetWrf(0, 0, 0, 0, 0, 0)
+SetTrf(0, 0, 0, 0, 0, 0)
+
+// Set motion parameters
+SetJointVel(25)
+SetCartLinVel(150)
+SetCartAngVel(45)
+SetCartAcc(50)
+SetJointAcc(100)
+
+// ----------------------------------------------------------------------------
+// DEMO A: EFFECT OF CHANGING TRF
+// Expected Result: Robot compensates position to maintain TCP location
+// ----------------------------------------------------------------------------
+
+// Move to safe position above pick location
+MovePose(271, -63, 82, 0, 90, 0)
+Delay(0.5)
+MoveLin(271, -63, 52, 0, 90, 0)   // Move to position with no TRF
+Delay(0.5)
+
+// Define TRF for gripper: 40.5mm in X, 17mm in Z from flange
+SetTrf(40.5, 0, 17, 0, 0, 0)
+
+// Move to same coordinates - notice robot moves to compensate for TRF
+MoveLin(271, -63, 52, 0, 90, 0)
+
+// New position that accounts for gripper offset (TCP at correct spot)
+MoveLin(288, -63, 8, 0, 90, 0)
+
+// ----------------------------------------------------------------------------
+// DEMO B: TOOL-RELATIVE MOVEMENTS WITH TRF
+// Expected Result: Movements follow tool coordinate system orientation
+// ----------------------------------------------------------------------------
+
+// Perform pick/place pattern using tool-relative moves
+MoveLinRelTrf(-15, 0, 0, 0, 0, 0)    // Move in tool -X
+MoveLinRelTrf(0, 50, 0, 0, 0, 0)     // Move in tool +Y
+MoveLinRelTrf(15, 0, 0, 0, 0, 0)     // Move in tool +X
+MoveLinRelTrf(-15, 0, 0, 0, 0, 0)    // Move in tool -X
+MoveLinRelTrf(0, 0, -50, 0, 0, 0)    // Move in tool -Z
+MoveLinRelTrf(15, 0, 0, 0, 0, 0)     // Move in tool +X
+MoveLinRelTrf(-15, 0, 0, 0, 0, 0)    // Move in tool -X
+MoveLinRelTrf(0, -50, 0, 0, 0, 0)    // Move in tool -Y
+MoveLinRelTrf(15, 0, 0, 0, 0, 0)     // Move in tool +X
+MoveLinRelTrf(-15, 0, 0, 0, 0, 0)    // Move in tool -X
+MoveLinRelTrf(0, 0, 50, 0, 0, 0)     // Move in tool +Z
+Delay(0.5)
+
+MoveLin(288, -63, 50, 0, 90, 0)
+Delay(1)
+
+// ----------------------------------------------------------------------------
+// DEMO C: ROTATION AROUND TOOL TIP
+// Expected Result: Gripper rotates while keeping TCP (part) stationary
+// ----------------------------------------------------------------------------
+
+// Move to pick position
+MoveLin(188, -63, 8, 0, 90, 0)
+Delay(0.5)
+
+// Lift part
+MoveLin(188, -63, 28, 0, 90, 0)
+Delay(0.5)
+
+// Rotate around tool tip (part) using world frame rotation
+// This keeps TCP (part) stationary while rotating gripper
+MoveLinRelWrf(0, 0, 0, 0, 0, 60)     // Rotate 60 degrees around part
+Delay(0.5)
+
+MoveLinRelWrf(0, 0, 0, 0, 0, -160)   // Rotate back 160 degrees
+Delay(0.5)
+
+MoveLinRelWrf(0, 0, -20, 0, 0, 0)    // Lower part
+Delay(1)
+
+MoveLinRelWrf(0, 0, 20, 0, 0, 0)     // Lift
+Delay(0.5)
+
+MoveLin(188, -63, 28, 0, 90, 0)      // Return to position
+Delay(0.5)
+
+MoveJoints(0, 0, 0, 0, 0, 0)         // Return to home
+
+
+/* ============================================================================
+SUMMARY
+============================================================================
+SECTION 2 – Work & Tool Reference Frames   | Duration ≈ 40 min
+----------------------------------------------------------------------------
+
+KEY DEMOS
+• Demo A – Base-relative pallet moves (inefficient)  
+• Demo B – Define WRF at pallet origin (efficient)  
+• Demo C – Move origin/rotate WRF and watch auto-compensation  
+• Demo D – Tool-relative moves with TRF (rotation around TCP)  
+
+QUICK REFERENCE COMMANDS
+SetWrf, SetTrf, MoveLinRelWrf, MoveLinRelTrf, MovePose, SetFrame
+
+COMMON WARNINGS & FIXES
+• Wrong frame active → verify GetCurWrf/Trf before move  
+• Unexpected orientation after TRF change → home tool, re-set TRF
+
+PRODUCTION TAKEAWAYS
+• One WRF per fixture, one TRF per tool – change once, reuse forever.  
+• Separate part coordinates from robot base for portable code.  
+• Combining WRF & TRF enables program-once, deploy-anywhere philosophy.
+*/

@@ -1,0 +1,340 @@
+// ============================================================================
+// MODULE 3: CONFIGURATION MANAGEMENT AND SINGULARITIES FOR MECA500
+// ============================================================================
+// Overview: Master robot configurations and understand singularity behavior
+// Duration: 60 minutes
+// Prerequisites: Module 1 & 2 - Basic motion commands and reference frames
+// ============================================================================
+
+// ============================================================================
+// PROGRAM 3.1: UNDERSTANDING ROBOT CONFIGURATIONS
+// ============================================================================
+// Objective: Visualize how the same TCP pose can be achieved with eight different configurations
+// Key Concepts:
+// • cs - Shoulder (Front = 1, Back = -1)
+// • ce - Elbow (Up = 1, Down = -1)
+// • cw - Wrist (No-Flip = 1, Flip = -1)
+// Safety: DETACH GRIPPER CABLE before running Demo A to prevent tangling
+// ============================================================================
+
+// Set motion parameters
+SetJointVel(25)
+SetCartLinVel(150)
+SetCartAngVel(45)
+SetCartAcc(50)
+SetJointAcc(100)
+SetBlending(0)
+
+// Frame reset
+SetWrf(0, 0, 0, 0, 0, 0)
+SetTrf(0, 0, 0, 0, 0, 0)
+SetAutoConf(1)
+
+// Safe starting position
+MovePose(300, 0, 100, 0, 90, 0)
+Delay(1)
+
+// ----------------------------------------------------------------------------
+// DEMO A: VISUALIZE ALL 8 CONFIGURATIONS @ TCP {77,210,300,-103,36,175}
+// Expected Result: Robot achieves same TCP pose with 8 different postures
+// WARNING: DETACH GRIPPER CABLE PRIOR TO RUNNING THIS CODE
+// ----------------------------------------------------------------------------
+
+MovePose(77,210,300,-103,36,175)    // Automatic configuration
+Delay(2)
+
+// Enumerate configurations
+// {cs, ce, cw} – Description
+
+// Configuration 1: {1, 1, 1} – Front, Elbow Up, No Flip
+SetConf(1, 1, 1)
+MovePose(77,210,300,-103,36,175)
+Delay(1.5)
+
+// Configuration 2: {1, 1, -1} – Front, Elbow Up, Flip
+SetConf(1, 1, -1)
+MovePose(77,210,300,-103,36,175)
+Delay(1.5)
+
+// Configuration 3: {1, -1, 1} – Front, Elbow Down, No Flip
+SetConf(1, -1, 1)
+MovePose(77,210,300,-103,36,175)
+Delay(1.5)
+
+// Configuration 4: {1, -1, -1} – Front, Elbow Down, Flip
+SetConf(1, -1, -1)
+MovePose(77,210,300,-103,36,175)
+Delay(1.5)
+
+// Configuration 5: {-1, 1, 1} – Back, Elbow Up, No Flip
+SetConf(-1, 1, 1)
+MovePose(77,210,300,-103,36,175)
+Delay(1.5)
+
+// Configuration 6: {-1, 1, -1} – Back, Elbow Up, Flip
+SetConf(-1, 1, -1)
+MovePose(77,210,300,-103,36,175)
+Delay(1.5)
+
+// Configuration 7: {-1, -1, 1} – Back, Elbow Down, No Flip
+SetConf(-1, -1, 1)
+MovePose(77,210,300,-103,36,175)
+Delay(1.5)
+
+// Configuration 8: {-1, -1, -1} – Back, Elbow Down, Flip
+SetConf(-1, -1, -1)
+MovePose(77,210,300,-103,36,175)
+Delay(2)
+
+// ----------------------------------------------------------------------------
+// DEMO B: EFFECT OF CHANGING ONE CONFIGURATION PARAMETER AT A TIME
+// Expected Result: Clear visualization of shoulder, elbow, and wrist changes
+// ----------------------------------------------------------------------------
+
+// Start from {1, 1, 1}
+SetConf(1, 1, 1)
+MovePose(77,210,300,-103,36,175)
+Delay(1)
+
+// SHOULDER only: Front → Back
+SetConf(-1, 1, 1)
+MovePose(77,210,300,-103,36,175)
+Delay(1.5)
+
+// ELBOW only: Up → Down
+SetConf(1, 1, 1)
+MovePose(77,210,300,-103,36,175)
+Delay(0.5)
+SetConf(1, -1, 1)
+MovePose(77,210,300,-103,36,175)
+Delay(1.5)
+
+// WRIST only: No Flip → Flip
+SetConf(1, 1, 1)
+MovePose(77,210,300,-103,36,175)
+Delay(0.5)
+SetConf(1, 1, -1)
+MovePose(77,210,300,-103,36,175)
+Delay(2)
+
+// Return to safe position
+MoveJoints(0, 72.753298, -18.595018, 0, -54.15828, 0)
+Delay(1)
+
+// ============================================================================
+// PROGRAM 3.2: CONFIGURATION CONTROL STRATEGIES
+// ============================================================================
+// Objective: Compare automatic vs manual configuration selection
+// Key Concepts:
+// • Linear moves cannot change configuration mid-path
+// • Use MovePose to switch configurations
+// • SetAutoConf(1) for automatic selection
+// Safety: Monitor for unexpected configuration changes
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// DEMO C: CONFIGURATION TRANSITIONS WITH LINEAR MOVES
+// Expected Result: Linear moves maintain configuration; MovePose can change it
+// ----------------------------------------------------------------------------
+
+// Move to pose using configuration {1, 1, -1}
+SetConf(1, 1, -1)
+MovePose(250, 50, 150, 0, 90, 0)
+Delay(0.5)
+
+// Linear move that MAINTAINS configuration
+MoveLin(250, -50, 150, 0, 90, 0)
+Delay(0.5)
+
+// Attempt to force a different configuration before a linear move – will fail
+SetConf(1, 1, 1)
+// MoveLin(250, 50, 150, 0, 90, 0)  // (commented: invalid)
+
+// Proper way: use MovePose to switch configuration first
+MovePose(250, -50, 150, 0, 90, 0)
+Delay(0.5)
+// MoveLin sequence that would not have been possible with {1, 1, -1}
+MoveLin(90, 90, 70, -92, -88, 90)  
+MoveLin(150, -25, 60, 85, 0, -90)
+
+// Re-enable automatic configuration for subsequent demos
+SetAutoConf(1)
+GetRtConf()      // Command to get current configuration
+MoveJoints(0, 0, 0, 0, 0, 0)
+
+// ============================================================================
+// PROGRAM 3.3: SINGULARITY DEMONSTRATION AND AVOIDANCE
+// ============================================================================
+// Objective: Understand and avoid robot singularities
+// Key Concepts:
+// • Wrist singularity (θ5 = 0°) - most common
+// • Elbow singularity (θ3 ≈ -72.43°) - at reach limit
+// • Shoulder singularity (wrist center on J1 axis)
+// Safety: Reduce speeds near singularities; use MovePose instead of MoveLin
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// DEMO A: WRIST SINGULARITY (θ5 = 0°)
+// Expected Result: J4 and J6 become coupled; high joint speeds in Y-direction
+// ----------------------------------------------------------------------------
+
+// Move to safe position first
+MovePose(300, 0, 100, 0, 90, 0)
+Delay(1)
+
+// Approach wrist singularity
+MoveJoints(0, 45, -45, 0, 20, 0)
+Delay(0.5)
+MoveJoints(0, 45, -45, 0, 5, 0)
+Delay(0.5)
+
+// At singularity: θ5 = 0° – J4 and J6 are coupled
+MoveJoints(0, 45, -45, 0, 0, 0)
+Delay(1)
+
+// Jog the robot in the Y-direction to see effects of moving near a singularity
+MoveLin(285, 35, 275, 0, 90, 0)
+Delay(0.5)
+MoveLin(285, -35, 275, 0, 90, 0)
+Delay(0.5)
+MoveJoints(0, 45, -45, 0, 0, 0)
+
+// Demonstrate coupling - Joints 4 and 6 moving simultaneously, keeping TCP at same spot
+MoveJoints(0, 45, -45, 45, 0, -45)
+Delay(0.5)
+MoveJoints(0, 45, -45, 90, 0, -90)
+Delay(0.5)
+MoveJoints(0, 45, -45, 0, 0, 0)
+Delay(1)
+
+// Exit singularity
+MoveJoints(0, 45, -45, 0, 30, 0)
+Delay(1)
+
+// ----------------------------------------------------------------------------
+// DEMO B: ELBOW SINGULARITY (θ3 ≈ -72.43°)
+// Expected Result: Robot at maximum reach; small movements cause large joint speeds
+// ----------------------------------------------------------------------------
+
+MovePose(284,0,172,0,90,0)
+Delay(0.5)
+MovePose(325,0,172,0,90,0)
+Delay(0.5)
+MovePose(328.225,0,172,0,90,0)        // Near maximum reach
+Delay(0.3)
+MovePose(325,0,172,0,90,0)
+Delay(0.3)
+MovePose(328.225,0,172,0,90,0)        // Near maximum reach
+Delay(0.5)
+
+MovePose(328.225,2.325,172,0,90,0)    // Small perturbations
+Delay(0.2)
+MovePose(328.225,-2.325,172,0,90,0)
+Delay(0.2)
+
+MovePose(284,0,172,0,90,0)            // Retreat
+Delay(1)
+
+// ----------------------------------------------------------------------------
+// DEMO C: SHOULDER SINGULARITY (wrist centre on J1 axis)
+// Expected Result: Cannot move in Y-direction; J1, J4, J6 coupled
+// ----------------------------------------------------------------------------
+
+SetTrf(0,0,-70,0,0,0)                 // 1) TCP to wrist centre
+SetWrf(0,0,0,0,0,0)                   // 2) New work frame
+
+MovePose(0,0,350,0,90,0)              // 3) X=Y=0 – over J1 axis
+Delay(1)
+
+// The robot cannot move in the Y-direction. Try jogging the robot yourself
+
+MoveLinRelWrf(20,0,0,0,0,0)           // Lateral jogs
+Delay(0.5)
+MoveLin(20, 45, 350, 0, 90, 0)       // Fast movements near singularity
+Delay(0.3)
+MoveLin(20, -45, 350, 0, 90, 0)
+Delay(1)
+
+MovePose(100,0,350,0,90,0)            // Exit singularity
+Delay(1)
+
+SetTrf(0,0,0,0,0,0)                   // Reset TRF
+SetWrf(0,0,0,0,0,0)                   // Reset WRF
+MoveJoints(0,0,0,0,0,0)
+
+// ----------------------------------------------------------------------------
+// DEMO D: PRACTICAL SINGULARITY AVOIDANCE
+// Expected Result: Successful navigation around singularities
+// ----------------------------------------------------------------------------
+
+// Strategy 1: Use MovePose instead of MoveLin near singularities
+MovePose(300, 0, 100, 0, 90, 0)
+Delay(0.5)
+
+// Attempting linear move through wrist singularity region
+MoveJoints(0, 45, -45, 0, 0, 0)
+Delay(0.5)
+MoveLin(285, 35, 268, 0, 90, 0)   // Pose Y1
+Delay(0.5)
+
+// The following MoveLin command passed through the singularity and throws an error
+//MoveLin(285, -35, 268, 0, 90, 0)
+
+// Instead, use MovePose and AutoConf to get to the target pose
+MovePose(285, -35, 268, 0, 90, 0)
+// NOTE: The configuration has changed and MoveLin to pose Y1 now works
+
+Delay(0.5)
+MoveJoints(0, 45, -45, 0, 0, 0)
+
+// Strategy 2: Waypoints to go around singularity
+MoveJoints(0, 45, -45, 0, 0, 0)
+Delay(0.5)
+MoveLin(285, 35, 268, 0, 90, 0)   // Pose Y1
+Delay(0.5)
+
+// This pose maintains a linear path by moving a few millimeters above the singularity
+MoveLin(285, 0, 275, 0, 90, 0)
+MoveLin(285, -35, 268, 0, 90, 0)
+
+// Strategy 3: Offset TRF to avoid wrist singularities
+SetTrf(30, 0, 30, 0, 0, 0)           // Offset keeps wrist away from θ5 = 0
+
+// Now the same moves avoid wrist singularity
+MoveJoints(0, 45, -45, 0, 0, 0)
+Delay(0.5)
+MoveLin(285, 35, 268, 0, 90, 0)   // Pose Y1
+Delay(0.5)
+MoveLin(285, -35, 268, 0, 90, 0)
+
+SetTrf(0, 0, 0, 0, 0, 0)
+
+// Return to home position
+MoveJoints(0, 0, 0, 0, 0, 0)
+
+/* ============================================================================
+SUMMARY
+============================================================================
+SECTION 3 – Configurations & Singularities   | Duration ≈ 50 min
+----------------------------------------------------------------------------
+
+KEY DEMOS
+• Demo A – Visualize all 8 shoulder/elbow/wrist configurations  
+• Demo B – Change one configuration parameter at a time  
+• Demo C – Linear moves through configuration transitions  
+• Demo D – Wrist (θ5 = 0°), Elbow, Shoulder singularity behaviour  
+• Demo E – Practical singularity avoidance workflow
+
+QUICK REFERENCE COMMANDS
+SetConf, MovePose, MoveLin, SetTrf, SetWrf, GetConf
+
+COMMON WARNINGS & FIXES
+• “Joint speed too high” → near singularity ⇒ retreat or use MovePose  
+• “Cannot perform linear move” → configuration change required ⇒ use MovePose  
+• Robot flip mid-path → set desired configuration explicitly with SetConf
+
+PRODUCTION TAKEAWAYS
+• Lock configurations for predictable cycle times & collision envelopes.  
+• Design tasks away from singular axes to maintain controllability.  
+• Teach operators to recognize symptoms & corrective actions quickly.
+*/
