@@ -73,7 +73,7 @@ int wait_for_return_code(int code, Meca500 *robot)
     
     char buffer[1024];
     int received_code = 0;
-    
+
     while (received_code != code)
     {
         memset(buffer, 0, sizeof(buffer));
@@ -85,7 +85,7 @@ int wait_for_return_code(int code, Meca500 *robot)
         }
         
         received_code = extract_code(buffer);
-        
+
         // Check for error codes (1000-2000 range)
         if (received_code >= 1000 && received_code < 2000)
         {
@@ -117,7 +117,7 @@ int activate_robot(Meca500 *robot)
         return -1;
     }
     
-    return wait_for_return_code(3001, robot); // Wait for robot activated
+    return wait_for_return_code(2000, robot); // Wait for robot activated
 }
 
 //=============================================================================
@@ -133,7 +133,7 @@ int deactivate_robot(Meca500 *robot)
         return -1;
     }
     
-    return wait_for_return_code(3002, robot); // Wait for robot deactivated
+    return wait_for_return_code(2004, robot); // Wait for robot deactivated
 }
 
 //=============================================================================
@@ -149,7 +149,7 @@ int activate_sim(Meca500 *robot)
         return -1;
     }
     
-    return wait_for_return_code(3056, robot); // Wait for sim activated
+    return wait_for_return_code(2045, robot); // Wait for sim activated
 }
 
 //=============================================================================
@@ -165,7 +165,7 @@ int deactivate_sim(Meca500 *robot)
         return -1;
     }
     
-    return wait_for_return_code(3057, robot); // Wait for sim deactivated
+    return wait_for_return_code(2046, robot); // Wait for sim deactivated
 }
 
 //=============================================================================
@@ -181,7 +181,7 @@ int home(Meca500 *robot)
         return -1;
     }
     
-    return wait_for_return_code(3003, robot); // Wait for homing done
+    return wait_for_return_code(2002, robot); // Wait for homing done
 }
 
 //=============================================================================

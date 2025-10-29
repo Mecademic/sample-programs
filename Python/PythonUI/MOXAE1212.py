@@ -1,4 +1,4 @@
-from pymodbus.client.sync import ModbusTcpClient
+from pymodbus.client import ModbusTcpClient
 
 class MoxaE1212:
     """Class to interface with the MOXA ioLogik E1212 External IO Module.

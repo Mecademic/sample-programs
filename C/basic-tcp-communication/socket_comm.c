@@ -12,6 +12,17 @@ static WSADATA wsaData;
 /// Utility to exit the function if the socket system is not initialized.
 #define EXIT_ON_SYSTEM_NOT_INITED() if(socket_system_user_count == 0) {return -1;}
 
+/// Close the socket library if no more user on it.
+void cleanup_socket_system()
+{
+    socket_system_user_count--;
+    if (socket_system_user_count == 0)
+    {
+        printf("Closing WSA\r\n");
+        WSACleanup();
+    }
+}
+
 /// Initialise the socket library if needed.
 int init_socket_system()
 {
@@ -30,16 +41,7 @@ int init_socket_system()
     return 0;
 }
 
-/// Close the socket library if no more user on it.
-void cleanup_socket_system()
-{
-    socket_system_user_count--;
-    if (socket_system_user_count == 0)
-    {
-        printf("Closing WSA\r\n");
-        WSACleanup();
-    }
-}
+
 
 //=============================================================================
 //
@@ -140,9 +142,9 @@ int tcpip_send(const char *buffer, int len, tcpip_connection *connection)
 //=============================================================================
 //
 int tcpip_receive(char *buffer, int len, tcpip_connection *connection)
-{
+{   
     EXIT_ON_SYSTEM_NOT_INITED();
-
+    
     int recv_result = recv(connection->socket_, buffer, len, 0);
     if (recv_result == 0) // Closing connection case
     {
